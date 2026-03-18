@@ -178,7 +178,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                 >
                   <option value="">Seleccionar...</option>
                   {categories.map(c => (
-                    <option key={c.ID} value={c.ID}>{c.Name}</option>
+                    <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
                 <ChevronIcon />
@@ -197,7 +197,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                   <option value="">Seleccionar...</option>
                   {accountingGroups.map(g =>
                     g.accounts.map(a => (
-                      <option key={a.ID} value={a.ID}>
+                      <option key={a.id} value={a.id}>
                         {g.name} — {a.account_code}
                       </option>
                     ))
@@ -218,7 +218,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                 >
                   <option value="">Seleccionar...</option>
                   {cities.map(c => (
-                    <option key={c.ID} value={c.ID}>{c.Name} — {c.Department}</option>
+                    <option key={c.id} value={c.id}>{c.name} — {c.department}</option>
                   ))}
                 </select>
                 <ChevronIcon />
@@ -239,7 +239,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                 >
                   <option value="">Sin área asignada</option>
                   {areas.map(a => (
-                    <option key={a.ID} value={a.ID}>{a.Name}</option>
+                    <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
                 </select>
                 <ChevronIcon />

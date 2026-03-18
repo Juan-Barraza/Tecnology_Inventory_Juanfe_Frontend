@@ -33,7 +33,7 @@ export default function NoPeriodView() {
             </div>
 
             {serverError && (
-                <p className="text-sm text-red-500">{serverError}</p>
+                <p className="text-sm text-red-500">{'Periodo ya abierto'}</p>
             )}
 
             <button

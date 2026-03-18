@@ -1,22 +1,22 @@
 export interface City {
-    ID: number
-    Name: string
-    Department: string
+    id: number
+    name: string
+    department: string
 }
 
 export interface Area {
-    ID: number
-    Name: string
-    Description: string | null
+    id: number
+    name: string
+    description: string | null
 }
 
 export interface AssetCategory {
-    ID: number
-    Name: string
+    id: number
+    name: string
 }
 
 export interface AssetAccountItem {
-    ID: number
+    id: number
     account_code: number
     open_ledger: string | null
 }
