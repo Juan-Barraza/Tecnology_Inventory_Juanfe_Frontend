@@ -36,12 +36,24 @@ export default function AssetsPage() {
     setFilters(prev => ({ ...prev, logical_status: status, page: 1 }))
   }
 
+  function handleDateFrom(val: string) {
+    setFilters(prev => ({ ...prev, from: val || undefined, page: 1 }))
+  }
+
+  function handleDateTo(val: string) {
+    setFilters(prev => ({ ...prev, to: val || undefined, page: 1 }))
+  }
+
   function clearFilters() {
     setSearch('')
     setFilters({ page: 1, limit: 10 })
   }
 
-  const hasActiveFilters = !!filters.logical_status || !!debouncedSearch
+  const hasActiveFilters =
+    !!filters.logical_status ||
+    !!debouncedSearch ||
+    !!filters.from ||
+    !!filters.to
 
   return (
     <div className="space-y-6">
@@ -104,6 +116,28 @@ export default function AssetsPage() {
             </svg>
           </span>
         </div>
+        {/* Rango de fechas */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-500 whitespace-nowrap">Desde</label>
+            <input
+              type="date"
+              value={filters.from ?? ''}
+              onChange={e => handleDateFrom(e.target.value)}
+              className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
+            />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-500 whitespace-nowrap">Hasta</label>
+            <input
+              type="date"
+              value={filters.to ?? ''}
+              onChange={e => handleDateTo(e.target.value)}
+              className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
+            />
+          </div>
+        </div>
+
 
         {hasActiveFilters && (
           <button
@@ -340,8 +374,8 @@ function Pagination({ page, limit, total, totalPages, onPageChange }: Pagination
             key={p}
             onClick={() => onPageChange(p)}
             className={`w-8 h-8 flex items-center justify-center rounded-lg font-bold text-xs transition-colors ${page === p
-                ? 'bg-accent text-slate-900'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+              ? 'bg-accent text-slate-900'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
           >
             {p}
