@@ -55,7 +55,7 @@ export default function AppLayout() {
           <div className="flex items-center justify-between mb-8 md:mb-10">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-accent flex items-center justify-center font-bold text-lg md:text-xl text-slate-900 flex-shrink-0">
-                <img src="./public/logo-juanfe.ico" alt="Logo" />
+                <img src="/logo-juanfe.ico" alt="logo" />
               </div>
               <div>
                 <h2 className="font-bold text-base md:text-lg leading-tight text-slate-900 dark:text-white">
