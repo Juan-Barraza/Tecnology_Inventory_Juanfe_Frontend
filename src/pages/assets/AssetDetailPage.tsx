@@ -6,12 +6,16 @@ import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR, PHYSICAL_STATUS_LABEL, PHYS
 import { formatDate, formatDateTime } from '@/utils/date'
 import AssignmentModal from './components/AsiignmtModal'
 import ChangeStatusModal from './components/ChangeStatusModal'
+import EditAssetModal from './components/EditAssetModel';
+
 
 export default function AssetDetailPage() {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
     const [assignModalOpen, setAssignModalOpen] = useState(false)
     const [statusModalOpen, setStatusModalOpen] = useState(false)
+    const [editModalOpen, setEditModalOpen] = useState(false)
+
 
     const { data: asset, isLoading, isError } = useAsset(id!)
     const { data: assignments = [] } = useAssignments(id!)
@@ -60,6 +64,12 @@ export default function AssetDetailPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setEditModalOpen(true)}
+                        className="px-4 py-2 text-sm font-semibold border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+                    >
+                        Editar
+                    </button>
                     <button
                         onClick={() => setStatusModalOpen(true)}
                         className="px-4 py-2 text-sm font-semibold border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
@@ -259,6 +269,13 @@ export default function AssetDetailPage() {
                 currentLogical={asset.logical_status}
                 currentPhysical={asset.physical_status}
             />
+            {asset && (
+                <EditAssetModal
+                    isOpen={editModalOpen}
+                    onClose={() => setEditModalOpen(false)}
+                    asset={asset}
+                />
+            )}
         </div>
     )
 }

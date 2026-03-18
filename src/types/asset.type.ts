@@ -12,6 +12,8 @@ export interface Asset {
     open_ledger: string | null
     city: string
     area: string | null
+    city_id: number
+    area_id: number | null
     historical_cost: number | null
     activation_date: string
     logical_status: LogicalStatus
