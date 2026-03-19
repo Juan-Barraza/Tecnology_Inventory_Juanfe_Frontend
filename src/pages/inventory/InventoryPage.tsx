@@ -23,10 +23,10 @@ export default function InventoryPage() {
         <div className="space-y-6">
             <div>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                    Inventario
+                    Auditoria
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Control mensual de activos tecnológicos
+                    Control de activos tecnológicos
                 </p>
             </div>
 

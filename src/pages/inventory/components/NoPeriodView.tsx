@@ -24,11 +24,11 @@ export default function NoPeriodView() {
 
             <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">
-                    No hay inventario abierto
+                    No hay Auditoria abierta
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">
-                    Abre el inventario de <strong>{MONTHS[month]} {year}</strong> para comenzar
-                    a registrar la revisión mensual de activos.
+                    Abre la Auditoria de <strong>{MONTHS[month]} {year}</strong> para comenzar
+                    a registrar la revisión de activos.
                 </p>
             </div>
 
@@ -43,7 +43,7 @@ export default function NoPeriodView() {
             >
                 {isPending
                     ? <><div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />Abriendo...</>
-                    : <>Abrir inventario de {MONTHS[month]} {year}</>
+                    : <>Abrir Auditoria de {MONTHS[month]} {year}</>
                 }
             </button>
         </div>

@@ -22,6 +22,7 @@ export interface InventoryRecord {
   logical_status: string
   confirmed: boolean
   deactivated: boolean
+  has_label: boolean
   notes: string | null
   recorded_by_name: string
   recorded_at: string
@@ -32,6 +33,7 @@ export interface RecordAssetRequest {
   asset_id: string
   confirmed: boolean
   deactivated: boolean
+  has_label: boolean
   notes?: string
 }
 
@@ -54,6 +56,8 @@ export interface AssetInventoryStatus {
   record_id: string | null
   confirmed: boolean | null
   deactivated: boolean | null
+  has_label: boolean | null
   notes: string | null
   recorded_at: string | null
+  activation_date: string | null
 }
