@@ -16,12 +16,14 @@ export default function OpenPeriodView({ period }: Props) {
     const [confirmClose, setConfirmClose] = useState(false)
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
+    const [filterFrom, setFilterFrom] = useState('')
+    const [filterTo, setFilterTo] = useState('')
     const LIMIT = 20
     const navigate = useNavigate()
 
 
     // Optimistic state — refleja cambios inmediatamente sin esperar el servidor
-    const [optimisticMap, setOptimisticMap] = useState<Map<string, { confirmed: boolean; deactivated: boolean; record_id: string }>>(new Map())
+    const [optimisticMap, setOptimisticMap] = useState<Map<string, { confirmed: boolean; deactivated: boolean; has_label: boolean, record_id: string }>>(new Map())
 
     // Merge assets con el estado optimista
     const mergedAssets = useMemo(() => {
@@ -33,19 +35,32 @@ export default function OpenPeriodView({ period }: Props) {
                 record_id: opt.record_id,
                 confirmed: opt.confirmed,
                 deactivated: opt.deactivated,
+                has_label: opt.has_label,
             }
         })
     }, [assets, optimisticMap])
 
     // Filtrado + paginación
     const filtered = useMemo(() => {
-        if (!search) return mergedAssets
-        const q = search.toLowerCase()
-        return mergedAssets.filter(a =>
-            a.asset_code.toLowerCase().includes(q) ||
-            a.asset_description.toLowerCase().includes(q)
-        )
-    }, [mergedAssets, search])
+        return mergedAssets.filter(a => {
+            // Búsqueda por texto
+            if (search) {
+                const q = search.toLowerCase()
+                if (
+                    !a.asset_code.toLowerCase().includes(q) &&
+                    !a.asset_description.toLowerCase().includes(q)
+                ) return false
+            }
+            // Filtro por fecha de activación (client-side)
+            if (filterFrom && a.activation_date) {
+                if (a.activation_date < filterFrom) return false
+            }
+            if (filterTo && a.activation_date) {
+                if (a.activation_date > filterTo) return false
+            }
+            return true
+        })
+    }, [mergedAssets, search, filterFrom, filterTo])
 
     const totalFiltered = filtered.length
     const totalPages = Math.ceil(totalFiltered / LIMIT)
@@ -56,14 +71,39 @@ export default function OpenPeriodView({ period }: Props) {
         setPage(1)
     }
 
-    function handleRecord(assetId: string, deactivated: boolean) {
+    function handleFilterFrom(val: string) {
+        setFilterFrom(val)
+        setPage(1)
+    }
+
+    function handleFilterTo(val: string) {
+        setFilterTo(val)
+        setPage(1)
+    }
+
+    function clearFilters() {
+        setSearch('')
+        setFilterFrom('')
+        setFilterTo('')
+        setPage(1)
+    }
+
+
+    const hasFilters = !!search || !!filterFrom || !!filterTo
+
+    function handleRecord(assetId: string, deactivated: boolean, hasLabel?: boolean) {
         // Optimistic update — actualiza inmediatamente la UI
+        const current = optimisticMap.get(assetId)
+        const currentHasLabel = hasLabel !== undefined
+            ? hasLabel
+            : current?.has_label ?? false
         setOptimisticMap(prev => {
             const next = new Map(prev)
             next.set(assetId, {
                 record_id: assetId, // temporal — suficiente para saber que fue revisado
                 confirmed: !deactivated,
                 deactivated,
+                has_label: currentHasLabel,
             })
             return next
         })
@@ -73,9 +113,43 @@ export default function OpenPeriodView({ period }: Props) {
             asset_id: assetId,
             confirmed: !deactivated,
             deactivated,
+            has_label: currentHasLabel,
         }, {
             onError: () => {
                 // Revertir si falla
+                setOptimisticMap(prev => {
+                    const next = new Map(prev)
+                    next.delete(assetId)
+                    return next
+                })
+            },
+        })
+    }
+    function handleToggleLabel(assetId: string, asset: AssetInventoryStatus) {
+        const current = optimisticMap.get(assetId)
+        const newLabel = !(current?.has_label ?? asset.has_label ?? false)
+        const confirmed = current?.confirmed ?? (asset.confirmed ?? false)
+        const deactivated = current?.deactivated ?? (asset.deactivated ?? false)
+
+        setOptimisticMap(prev => {
+            const next = new Map(prev)
+            next.set(assetId, {
+                record_id: assetId,
+                confirmed,
+                deactivated,
+                has_label: newLabel,
+            })
+            return next
+        })
+
+        recordAsset({
+            period_id: period.id,
+            asset_id: assetId,
+            confirmed,
+            deactivated,
+            has_label: newLabel,
+        }, {
+            onError: () => {
                 setOptimisticMap(prev => {
                     const next = new Map(prev)
                     next.delete(assetId)
@@ -127,7 +201,7 @@ export default function OpenPeriodView({ period }: Props) {
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Progreso del inventario
+                        Progreso de la Auditoria
                     </span>
                     <span className="text-sm font-bold text-accent">{Math.round(percentage)}%</span>
                 </div>
@@ -149,29 +223,59 @@ export default function OpenPeriodView({ period }: Props) {
                 </div>
             </div>
 
-            {/* Buscador */}
-            <div className="flex items-center gap-3">
+            {/* Filtros */}
+            <div className="flex flex-wrap items-center gap-2">
+                {/* Búsqueda */}
                 <input
                     type="text"
                     value={search}
                     onChange={e => handleSearch(e.target.value)}
                     placeholder="Buscar por código o descripción..."
-                    className="w-full sm:w-72 px-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
+                    className="w-full sm:w-64 px-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
                 />
+
+                {/* Rango de fechas — client side */}
+                <div className="flex items-center gap-1.5">
+                    <label className="text-xs font-medium text-slate-500 whitespace-nowrap">Desde</label>
+                    <input
+                        type="date"
+                        value={filterFrom}
+                        onChange={e => handleFilterFrom(e.target.value)}
+                        className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
+                    />
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <label className="text-xs font-medium text-slate-500 whitespace-nowrap">Hasta</label>
+                    <input
+                        type="date"
+                        value={filterTo}
+                        onChange={e => handleFilterTo(e.target.value)}
+                        className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
+                    />
+                </div>
+
+                {/* Info + limpiar */}
                 {totalFiltered > 0 && (
                     <span className="text-xs text-slate-400 whitespace-nowrap">
                         {totalFiltered} activos
                     </span>
                 )}
+                {hasFilters && (
+                    <button
+                        onClick={clearFilters}
+                        className="text-xs font-bold text-accent uppercase tracking-wider px-2 hover:underline"
+                    >
+                        Limpiar
+                    </button>
+                )}
             </div>
 
-            {/* Tabla — desktop */}
             {/* Tabla — desktop */}
             <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100 dark:border-slate-800">
-                            {['Código', 'Descripción', 'Categoría', 'Ciudad', 'Estado', 'Acciones'].map(h => (
+                            {['Código', 'Descripción', 'Categoría', 'Ciudad', 'Etiqueta', 'Estado', 'Acciones'].map(h => (
                                 <th key={h} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
                                     {h}
                                 </th>
@@ -215,6 +319,13 @@ export default function OpenPeriodView({ period }: Props) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-sm text-slate-500">{item.city_name}</span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <LabelCheckbox
+                                            assetId={item.asset_id}
+                                            asset={item}
+                                            onToggle={handleToggleLabel}
+                                        />
                                     </td>
                                     <td className="px-6 py-4">
                                         <ReviewBadge asset={item} />
@@ -276,6 +387,11 @@ export default function OpenPeriodView({ period }: Props) {
                                     </p>
                                 </div>
                             </div>
+                            <LabelCheckbox
+                                assetId={asset.asset_id}
+                                asset={asset}
+                                onToggle={handleToggleLabel}
+                            />
                             <RecordActions
                                 assetId={asset.asset_id}
                                 asset={asset}
@@ -406,6 +522,44 @@ function RecordActions({ assetId, asset, onRecord, fullWidth }: RecordActionsPro
                 Dar de baja
             </button>
         </div>
+    )
+}
+
+interface LabelCheckboxProps {
+    assetId: string
+    asset: AssetInventoryStatus
+    onToggle: (assetId: string, asset: AssetInventoryStatus) => void
+}
+
+function LabelCheckbox({ assetId, asset, onToggle }: LabelCheckboxProps) {
+    const checked = asset.has_label ?? false
+    return (
+        <label className="flex items-center gap-2 cursor-pointer group w-fit">
+            <div className="relative flex items-center">
+                <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => onToggle(assetId, asset)}
+                    className="sr-only peer"
+                />
+                <div className={`
+                    w-4 h-4 rounded border-2 flex items-center justify-center transition-all
+                    ${checked
+                        ? 'bg-accent border-accent'
+                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 group-hover:border-accent/60'
+                    }
+                `}>
+                    {checked && (
+                        <svg className="w-2.5 h-2.5 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    )}
+                </div>
+            </div>
+            <span className={`text-xs font-medium transition-colors ${checked ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400'}`}>
+                Tiene etiqueta
+            </span>
+        </label>
     )
 }
 

@@ -65,7 +65,7 @@ export default function PeriodDetailPage() {
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-slate-500">
                 <button onClick={() => navigate('/inventory')} className="hover:text-accent transition-colors">
-                    Inventario
+                    Auditoria
                 </button>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

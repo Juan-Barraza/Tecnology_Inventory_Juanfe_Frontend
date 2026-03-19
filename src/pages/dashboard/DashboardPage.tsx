@@ -66,7 +66,7 @@ export default function DashboardPage() {
         {/* Período abierto */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
-            Inventario actual
+            Auditoria actual
           </p>
           {inventory?.open_period ? (
             <div className="space-y-3">
@@ -117,7 +117,7 @@ export default function DashboardPage() {
         {/* Último período cerrado + total */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
-            Historial de inventarios
+            Historial de auditorias
           </p>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
