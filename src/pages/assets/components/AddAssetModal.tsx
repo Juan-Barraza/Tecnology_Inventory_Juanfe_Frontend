@@ -7,7 +7,7 @@ import { useCities, useAreas, useCategories, useAccountingGroups } from '@/hooks
 import type { PhysicalStatus } from '@/types/asset.type'
 
 const assetSchema = z.object({
-  code: z.string().min(1, 'El código es requerido'),
+  code: z.string().nullable().optional(),
   description: z.string().min(2, 'La descripción es requerida'),
   category_id: z.number({ message: 'Selecciona una categoría' }).min(1),
   asset_account_id: z.number({ message: 'Selecciona un grupo contable' }).min(1),
@@ -84,6 +84,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
     createAsset(
       {
         ...data,
+        code: data.code || 'Sin codigo',
         category_id: Number(data.category_id),
         asset_account_id: Number(data.asset_account_id),
         city_id: Number(data.city_id),
