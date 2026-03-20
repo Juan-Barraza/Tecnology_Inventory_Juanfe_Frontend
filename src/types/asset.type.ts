@@ -35,6 +35,7 @@ export interface CreateAssetRequest {
 }
 
 export interface UpdateAssetRequest {
+    code?: string,
     description?: string
     category_id?: number
     asset_account_id?: number

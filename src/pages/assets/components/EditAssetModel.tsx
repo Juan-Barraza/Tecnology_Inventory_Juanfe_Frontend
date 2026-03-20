@@ -10,6 +10,7 @@ const schema = z.object({
     description: z.string().min(2, 'Mínimo 2 caracteres'),
     city_id: z.number({ message: 'Selecciona una ciudad' }).min(1),
     area_id: z.number().nullable().optional(),
+    code: z.string().nullable().optional(),
 })
 
 type EditForm = z.infer<typeof schema>
@@ -44,6 +45,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                 description: asset.description,
                 city_id: asset.city_id,
                 area_id: asset.area_id ?? null,
+                code: asset.code,
             })
         }
     }, [isOpen, asset, reset])
@@ -58,6 +60,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                     description: data.description,
                     city_id: Number(data.city_id),
                     area_id: data.area_id ? Number(data.area_id) : null,
+                    code: data.code || 'Sin codigo',
                 },
             },
             { onSuccess: () => onClose() }
@@ -94,6 +97,18 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+
+                    {/* Code */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Código <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+                        </label>
+                        <input
+                            {...register('code')}
+                            placeholder="Código del activo"
+                            className={inputClass}
+                        />
+                    </div>
 
                     {/* Descripción */}
                     <div>
