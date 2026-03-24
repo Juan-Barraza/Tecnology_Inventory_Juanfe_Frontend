@@ -29,4 +29,8 @@ export const queryKeys = {
     records: (periodId: string) => [...queryKeys.inventory.periods(), periodId, 'records'] as const,
     progress: (periodId: string) => [...queryKeys.inventory.periods(), periodId, 'progress'] as const,
   },
+  exportsFiles: {
+    all: ['export'] as const,
+    xlsx: (filters: Record<string, any>) => [...queryKeys.exportsFiles.all, filters] as const,
+  },
 } as const

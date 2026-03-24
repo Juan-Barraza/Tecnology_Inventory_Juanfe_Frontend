@@ -6,6 +6,8 @@ import AddAssetModal from './components/AddAssetModal'
 import type { AssetFilter, LogicalStatus } from '@/types/asset.type'
 import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR } from '@/utils/constants'
 import { formatDate } from '@/utils/date'
+import { useExportXlsx } from '@/hooks/useExportsFile'
+import type { ExportXlsxFilter } from '@/types/exports.type'
 
 export default function AssetsPage() {
   const navigate = useNavigate()
@@ -23,6 +25,9 @@ export default function AssetsPage() {
     ...filters,
     search: debouncedSearch || undefined,
   })
+  const { mutate: downloadExcel, isPending } = useExportXlsx();
+  const filterToDownloadExcel: ExportXlsxFilter = { export_type: 'general' }
+
 
   const assets = data?.items ?? []
   const total = data?.total ?? 0
@@ -72,12 +77,21 @@ export default function AssetsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 h-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 h-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            onClick={() => downloadExcel(filterToDownloadExcel)}
+            disabled={isPending}
+          >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <span className="hidden sm:inline">Exportar XLSX</span>
-            <span className="sm:hidden">Exportar</span>
+            <span>
+              {isPending ? 'Generando...' : (
+                <>
+                  <span className="hidden sm:inline">Exportar XLSX</span>
+                  <span className="sm:hidden">Exportar</span>
+                </>
+              )}
+            </span>
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
