@@ -1,13 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import { usePeriodAssets } from '@/hooks/useInventory'
-import { useQuery } from '@tanstack/react-query'
-import { inventoryApi } from '@/api/inventory.api'
-import { queryKeys } from '@/hooks/query-keys'
 import { MONTHS } from '@/utils/constants'
 import { formatDateTime } from '@/utils/date'
 import { useExportXlsx } from '@/hooks/useExportsFile'
 import type { ExportXlsxFilter } from '@/types/exports.type'
+import { usePeriodDetail } from '@/hooks/useInventory';
 
 const LIMIT = 10
 
@@ -17,12 +15,7 @@ export default function PeriodDetailPage() {
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
 
-    const { data: period, isLoading: loadingPeriod } = useQuery({
-        queryKey: queryKeys.inventory.periods(),
-        queryFn: inventoryApi.getPeriods,
-        select: (periods) => periods.find(p => p.id === id),
-    })
-
+    const { data: period, isLoading: loadingPeriod } = usePeriodDetail(id || '');
     const { data: assets = [], isLoading: loadingAssets } = usePeriodAssets(id!)
     const { mutate: downloadExcel, isPending } = useExportXlsx();
     const filterToDownloadExcel: ExportXlsxFilter = { export_type: 'audit', year: period?.period_year, month: period?.period_month, day: period?.period_day }

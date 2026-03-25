@@ -12,6 +12,17 @@ export function usePeriods() {
     queryFn: inventoryApi.getPeriods,
   })
 }
+export function usePeriodDetail(periodId: string) {
+  const user = useAuthStore((s) => s.user);
+  const userId = user?.id || '';
+
+  return useQuery({
+    queryKey: queryKeys.userScope(userId).inventory.periods(),
+    queryFn: inventoryApi.getPeriods,
+    enabled: !!userId && !!periodId,
+    select: (periods) => periods.find((p) => p.id === periodId),
+  });
+}
 
 export function usePeriodRecords(periodId: string) {
   const user = useAuthStore((s) => s.user)
