@@ -22,6 +22,7 @@ export interface OpenPeriodStat {
     id: string
     period_year: number
     period_month: number
+    period_day: number
     reviewed: number
     total: number
     percentage: number
@@ -30,6 +31,7 @@ export interface OpenPeriodStat {
 export interface ClosedPeriodStat {
     period_year: number
     period_month: number
+    period_day: number
 }
 
 export interface CategoryStat {
