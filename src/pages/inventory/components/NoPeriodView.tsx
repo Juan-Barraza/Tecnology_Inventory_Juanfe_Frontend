@@ -28,7 +28,7 @@ export default function NoPeriodView() {
                     No hay Auditoria abierta
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">
-                    Abrir Auditoria <strong>{day} {MONTHS[month]} {year}</strong> para comenzar
+                    Abrir Auditoria <strong>{day} de {MONTHS[month]} {year}</strong> para comenzar
                     a registrar la revisión de activos.
                 </p>
             </div>
