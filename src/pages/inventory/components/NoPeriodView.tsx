@@ -4,12 +4,13 @@ import { MONTHS } from '@/utils/constants'
 export default function NoPeriodView() {
     const { mutate: createPeriod, isPending, error } = useCreatePeriod()
 
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = now.getMonth() + 1
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
 
     function handleOpen() {
-        createPeriod({ year, month })
+        createPeriod({ year, month, day })
     }
 
     const serverError = (error as any)?.response?.data?.error
@@ -27,7 +28,7 @@ export default function NoPeriodView() {
                     No hay Auditoria abierta
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">
-                    Abre la Auditoria de <strong>{MONTHS[month]} {year}</strong> para comenzar
+                    Abrir Auditoria <strong>{day} {MONTHS[month]} {year}</strong> para comenzar
                     a registrar la revisión de activos.
                 </p>
             </div>
@@ -43,7 +44,7 @@ export default function NoPeriodView() {
             >
                 {isPending
                     ? <><div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />Abriendo...</>
-                    : <>Abrir Auditoria de {MONTHS[month]} {year}</>
+                    : <>Abrir Auditoria {day} {MONTHS[month]} {year}</>
                 }
             </button>
         </div>

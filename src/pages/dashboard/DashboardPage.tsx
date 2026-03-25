@@ -73,7 +73,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-900 dark:text-white">
-                    {MONTHS[inventory.open_period.period_month]} {inventory.open_period.period_year}
+                    {inventory.open_period.period_day} de {MONTHS[inventory.open_period.period_month]} {inventory.open_period.period_year}
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {inventory.open_period.reviewed} de {inventory.open_period.total} revisados
@@ -131,7 +131,7 @@ export default function DashboardPage() {
                 <div className="text-right">
                   <p className="text-xs text-slate-400">Último cerrado</p>
                   <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    {MONTHS[inventory.last_closed.period_month]} {inventory.last_closed.period_year}
+                    {inventory.last_closed.period_day} de {MONTHS[inventory.last_closed.period_month]} {inventory.last_closed.period_year}
                   </p>
                 </div>
               )}

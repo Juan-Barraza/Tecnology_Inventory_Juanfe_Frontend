@@ -5,6 +5,8 @@ import type {
   CreateAssignmentRequest,
   ReleaseAssignmentRequest,
 } from '@/types/assignment.type'
+import { useAuthStore } from '@/store/auth.store'
+
 
 export function useAssignments(assetId: string) {
   return useQuery({
@@ -15,24 +17,28 @@ export function useAssignments(assetId: string) {
 }
 
 export function useCreateAssignment() {
+  const user = useAuthStore((s) => s.user)
+  const userId = user?.id || ''
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateAssignmentRequest) => assignmentsApi.create(data),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: queryKeys.assignments.byAsset(vars.asset_id) })
-      qc.invalidateQueries({ queryKey: queryKeys.assets.lists() })
+      qc.invalidateQueries({ queryKey: queryKeys.userScope(userId).assets.lists() })
     },
   })
 }
 
 export function useReleaseAssignment(assetId: string) {
+  const user = useAuthStore((s) => s.user)
+  const userId = user?.id || ''
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ReleaseAssignmentRequest }) =>
       assignmentsApi.release(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.assignments.byAsset(assetId) })
-      qc.invalidateQueries({ queryKey: queryKeys.assets.detail(assetId) })
+      qc.invalidateQueries({ queryKey: queryKeys.userScope(userId).assets.detail(assetId) })
     },
   })
 }

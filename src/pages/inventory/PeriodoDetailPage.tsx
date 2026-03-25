@@ -1,13 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import { usePeriodAssets } from '@/hooks/useInventory'
-import { useQuery } from '@tanstack/react-query'
-import { inventoryApi } from '@/api/inventory.api'
-import { queryKeys } from '@/hooks/query-keys'
 import { MONTHS } from '@/utils/constants'
 import { formatDateTime } from '@/utils/date'
 import { useExportXlsx } from '@/hooks/useExportsFile'
 import type { ExportXlsxFilter } from '@/types/exports.type'
+import { usePeriodDetail } from '@/hooks/useInventory';
 
 const LIMIT = 10
 
@@ -17,16 +15,10 @@ export default function PeriodDetailPage() {
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
 
-    const { data: period, isLoading: loadingPeriod } = useQuery({
-        queryKey: queryKeys.inventory.periods(),
-        queryFn: inventoryApi.getPeriods,
-        select: (periods) => periods.find(p => p.id === id),
-    })
-
+    const { data: period, isLoading: loadingPeriod } = usePeriodDetail(id || '');
     const { data: assets = [], isLoading: loadingAssets } = usePeriodAssets(id!)
     const { mutate: downloadExcel, isPending } = useExportXlsx();
-    const filterToDownloadExcel: ExportXlsxFilter = { export_type: 'audit', year: period?.period_year, month: period?.period_month }
-
+    const filterToDownloadExcel: ExportXlsxFilter = { export_type: 'audit', year: period?.period_year, month: period?.period_month, day: period?.period_day }
     const filtered = useMemo(() => {
         if (!search) return assets
         const q = search.toLowerCase()
@@ -42,6 +34,7 @@ export default function PeriodDetailPage() {
     const confirmed = assets.filter(a => a.record_id && !a.deactivated).length
     const deactivated = assets.filter(a => a.deactivated).length
     const pending = assets.filter(a => !a.record_id).length
+    const hasLabel = assets.filter(a => a.has_label).length
 
     if (loadingPeriod || loadingAssets) {
         return (
@@ -75,7 +68,7 @@ export default function PeriodDetailPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {MONTHS[period.period_month]} {period.period_year}
+                    {period.period_day} {MONTHS[period.period_month]} {period.period_year}
                 </span>
             </div>
 
@@ -88,7 +81,7 @@ export default function PeriodDetailPage() {
                                 Cerrado
                             </span>
                             <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                                {MONTHS[period.period_month]} {period.period_year}
+                                {period.period_day} {MONTHS[period.period_month]} {period.period_year}
                             </h2>
                         </div>
                         {period.closed_at && (
@@ -114,6 +107,7 @@ export default function PeriodDetailPage() {
                     <StatCard label="Total activos" value={assets.length} color="slate" />
                     <StatCard label="Confirmados" value={confirmed} color="green" />
                     <StatCard label="Dados de baja" value={deactivated} color="red" />
+                    <StatCard label='Etiquetados' value={hasLabel} color='blue' />
                     <StatCard label="Sin revisar" value={pending} color="yellow" />
                 </div>
             </div>
@@ -132,7 +126,7 @@ export default function PeriodDetailPage() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100 dark:border-slate-800">
-                            {['Código', 'Descripción', 'Categoría', 'Ciudad', 'Estado revisión'].map(h => (
+                            {['Código', 'Descripción', 'Categoría', 'Ciudad', 'Etiquetado', 'Estado revisión'].map(h => (
                                 <th key={h} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
                                     {h}
                                 </th>
@@ -166,6 +160,9 @@ export default function PeriodDetailPage() {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className="text-sm text-slate-500">{item.city_name}</span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-sm text-slate-500">{item.has_label ? 'Si' : 'No'}</span>
                                 </td>
                                 <td className="px-6 py-4">
                                     <StatusBadge item={item} />
@@ -214,12 +211,14 @@ export default function PeriodDetailPage() {
     )
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color: 'slate' | 'green' | 'red' | 'yellow' }) {
+function StatCard({ label, value, color }: { label: string; value: number; color: 'slate' | 'green' | 'red' | 'yellow' | 'blue' }) {
     const colors = {
         slate: 'bg-slate-50  dark:bg-slate-800/50  text-slate-700  dark:text-slate-300',
         green: 'bg-green-50  dark:bg-green-900/20  text-green-700  dark:text-green-400',
         red: 'bg-red-50    dark:bg-red-900/20    text-red-700    dark:text-red-400',
         yellow: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400',
+        blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
+
     }
     return (
         <div className={`${colors[color]} rounded-xl p-4`}>
