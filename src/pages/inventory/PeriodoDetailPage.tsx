@@ -68,7 +68,7 @@ export default function PeriodDetailPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {period.period_day} {MONTHS[period.period_month]} {period.period_year}
+                    {period.period_day} de {MONTHS[period.period_month]} {period.period_year}
                 </span>
             </div>
 

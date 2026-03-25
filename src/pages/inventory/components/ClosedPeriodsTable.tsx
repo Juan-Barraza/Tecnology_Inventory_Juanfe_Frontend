@@ -82,7 +82,7 @@ export default function ClosedPeriodsTable({ periods }: Props) {
                     >
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                                {MONTHS[p.period_month]} {p.period_year}
+                                {p.period_day} de {MONTHS[p.period_month]} {p.period_year}
                             </p>
                             <p className="text-xs text-slate-400 mt-0.5">
                                 {p.closed_at ? formatDateTime(p.closed_at) : '—'}

@@ -181,7 +181,7 @@ export default function OpenPeriodView({ period }: Props) {
                             Abierto
                         </span>
                         <h3 className="font-bold text-slate-900 dark:text-white">
-                            {period.period_day} {MONTHS[period.period_month]} {period.period_year}
+                            {period.period_day} de {MONTHS[period.period_month]} {period.period_year}
                         </h3>
                     </div>
                     <p className="text-xs text-slate-500">
