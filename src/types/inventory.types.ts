@@ -4,6 +4,7 @@ export interface InventoryPeriod {
   id: string
   period_year: number
   period_month: number
+  period_day: number
   status: PeriodStatus
   created_by: string
   closed_at: string | null

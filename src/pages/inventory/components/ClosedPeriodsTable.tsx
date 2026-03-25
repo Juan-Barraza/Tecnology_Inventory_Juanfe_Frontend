@@ -46,7 +46,7 @@ export default function ClosedPeriodsTable({ periods }: Props) {
                             >
                                 <td className="px-6 py-4">
                                     <span className="font-semibold text-slate-900 dark:text-white">
-                                        {MONTHS[p.period_month]} {p.period_year}
+                                        {p.period_day} de {MONTHS[p.period_month]} {p.period_year}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">

@@ -13,10 +13,11 @@ export const inventoryApi = {
     return res.data.data
   },
 
-  createPeriod: async (year: number, month: number): Promise<InventoryPeriod> => {
+  createPeriod: async (year: number, month: number, day: number): Promise<InventoryPeriod> => {
     const res = await api.post('/inventory/periods', {
       period_year: year,
       period_month: month,
+      period_day: day,
     })
     return res.data.data
   },

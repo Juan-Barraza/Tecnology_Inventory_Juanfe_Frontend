@@ -181,7 +181,7 @@ export default function OpenPeriodView({ period }: Props) {
                             Abierto
                         </span>
                         <h3 className="font-bold text-slate-900 dark:text-white">
-                            {MONTHS[period.period_month]} {period.period_year}
+                            {period.period_day} {MONTHS[period.period_month]} {period.period_year}
                         </h3>
                     </div>
                     <p className="text-xs text-slate-500">
@@ -668,8 +668,8 @@ function ConfirmCloseModal({ period, pending, closing, onConfirm, onCancel }: Co
                 <div>
                     <h3 className="font-bold text-slate-900 dark:text-white mb-1">¿Cerrar inventario?</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Estás cerrando el inventario de{' '}
-                        <strong>{MONTHS[period.period_month]} {period.period_year}</strong>.
+                        Estás cerrando el inventario del {' '}
+                        <strong>{period.period_day} {MONTHS[period.period_month]} {period.period_year}</strong>.
                         {pending > 0 && (
                             <span className="block mt-1 text-yellow-600 dark:text-yellow-400 font-medium">
                                 ⚠ {pending} activos quedarán sin revisar.

@@ -29,8 +29,8 @@ export function usePeriodProgress(periodId: string) {
 export function useCreatePeriod() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ year, month }: { year: number; month: number }) =>
-      inventoryApi.createPeriod(year, month),
+    mutationFn: ({ year, month, day }: { year: number; month: number; day: number }) =>
+      inventoryApi.createPeriod(year, month, day),
     onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.inventory.periods() }),
   })
 }
