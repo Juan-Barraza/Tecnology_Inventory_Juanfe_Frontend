@@ -207,7 +207,7 @@ export default function OpenPeriodView({ period }: Props) {
                 </div>
                 <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-accent rounded-full transition-all duration-500"
+                        className="h-full bg-blue-500 bg-accent rounded-full transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                     />
                 </div>
