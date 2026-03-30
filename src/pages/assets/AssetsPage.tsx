@@ -8,6 +8,7 @@ import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR } from '@/utils/constants'
 import { formatDate } from '@/utils/date'
 import { useExportXlsx } from '@/hooks/useExportsFile'
 import type { ExportXlsxFilter } from '@/types/exports.type'
+import { useAreas } from '@/hooks/useCatalogs'
 
 export default function AssetsPage() {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export default function AssetsPage() {
     limit: 10,
     logical_status: 'active',
   })
+  const { data: areas } = useAreas()
 
   const debouncedSearch = useDebounce(search, 400)
 
@@ -41,6 +43,10 @@ export default function AssetsPage() {
     setFilters(prev => ({ ...prev, logical_status: status, page: 1 }))
   }
 
+  function handleAreaFilter(area: number | undefined) {
+    setFilters(prev => ({ ...prev, area_id: area, page: 1 }))
+  }
+
   function handleDateFrom(val: string) {
     setFilters(prev => ({ ...prev, from: val || undefined, page: 1 }))
   }
@@ -56,6 +62,7 @@ export default function AssetsPage() {
 
   const hasActiveFilters =
     !!filters.logical_status ||
+    !!filters.area_id ||
     !!debouncedSearch ||
     !!filters.from ||
     !!filters.to
@@ -123,6 +130,24 @@ export default function AssetsPage() {
             <option value="active">Activo</option>
             <option value="inactive">Inactivo</option>
             <option value="written_off">Dado de baja</option>
+          </select>
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </div>
+
+        <div className='relative'>
+          <select
+            value={filters.area_id ?? 0}
+            onChange={e => handleAreaFilter((Number(e.target.value) as number) || undefined)}
+            className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium appearance-none pr-8 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors cursor-pointer"
+          >
+            <option value={filters.area_id ?? 0}>Todas las areas</option>
+            {areas?.map(a => (
+              <option key={a.id} value={a.id}>{a.name}</option>
+            ))}
           </select>
           <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
