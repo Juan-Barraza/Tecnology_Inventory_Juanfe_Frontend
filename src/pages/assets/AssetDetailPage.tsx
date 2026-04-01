@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAsset, useAssetHistory } from '@/hooks/useAssets'
 import { useAssignments } from '@/hooks/useAssignments'
-import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR, PHYSICAL_STATUS_LABEL, PHYSICAL_STATUS_COLOR } from '@/utils/constants'
+import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR, PHYSICAL_STATUS_LABEL, PHYSICAL_STATUS_COLOR, CATEGORY_LABEL } from '@/utils/constants'
 import { formatDate, formatDateTime } from '@/utils/date'
 import AssignmentModal from './components/AsiignmtModal'
 import ChangeStatusModal from './components/ChangeStatusModal'
@@ -113,7 +113,7 @@ export default function AssetDetailPage() {
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            <InfoField label="Categoría" value={asset.category} />
+                            <InfoField label="Categoría" value={CATEGORY_LABEL[asset.category] || asset.category} />
                             <InfoField label="Ciudad" value={asset.city} />
                             <InfoField label="Área" value={asset.area ?? '—'} />
                             <InfoField label="Fecha activación" value={formatDate(asset.activation_date)} />

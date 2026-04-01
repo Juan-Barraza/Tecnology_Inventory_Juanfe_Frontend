@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { useCreateAsset } from '@/hooks/useAssets'
 import { useCities, useAreas, useCategories, useAccountingGroups } from '@/hooks/useCatalogs'
 import type { PhysicalStatus } from '@/types/asset.type'
+import { CATEGORY_LABEL } from '@/utils/constants'
 
 const assetSchema = z.object({
   code: z.string().nullable().optional(),
@@ -179,7 +180,9 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                 >
                   <option value="">Seleccionar...</option>
                   {categories.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id}>
+                      {CATEGORY_LABEL[c.name] || c.name}
+                    </option>
                   ))}
                 </select>
                 <ChevronIcon />

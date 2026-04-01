@@ -33,3 +33,19 @@ export const MONTHS: Record<number, string> = {
     5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
     9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre',
 }
+
+export const CATEGORY_LABEL: Record<string, string> = {
+    'Camera': 'Cámara',
+    'Desktop': 'Computadora de Escritorio',
+    'Laptop': 'Portátil',
+    'Mobile': 'Móvil',
+    'Monitor': 'Monitor',
+    'Network': 'Redes',
+    'Other': 'Otros',
+    'Peripherals': 'Periféricos',
+    'Phone': 'Teléfono',
+    'Printer': 'Impresora',
+    'Projector': 'Proyector',
+    'Storage': 'Almacenamiento',
+    'Tablet': 'Tableta',
+}
