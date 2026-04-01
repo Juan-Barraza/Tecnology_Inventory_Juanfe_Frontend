@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useClosePeriod, usePeriodProgress, useRecordAsset, usePeriodAssets } from '@/hooks/useInventory'
-import { MONTHS } from '@/utils/constants'
+import { MONTHS, CATEGORY_LABEL } from '@/utils/constants'
 import type { InventoryPeriod, AssetInventoryStatus } from '@/types/inventory.types'
 import { useNavigate } from 'react-router-dom'
 
@@ -315,7 +315,7 @@ export default function OpenPeriodView({ period }: Props) {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-sm text-slate-500">{item.category_name}</span>
+                                        <span className="text-sm text-slate-500">{CATEGORY_LABEL[item.category_name] || item.category_name}</span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-sm text-slate-500">{item.city_name}</span>
@@ -382,7 +382,7 @@ export default function OpenPeriodView({ period }: Props) {
                                         {asset.asset_description}
                                     </p>
                                     <p className="text-xs text-slate-400 mt-0.5">
-                                        {asset.category_name} · {asset.city_name}
+                                        {CATEGORY_LABEL[asset.category_name] || asset.category_name} · {asset.city_name}
                                         {asset.area_name && ` · ${asset.area_name}`}
                                     </p>
                                 </div>

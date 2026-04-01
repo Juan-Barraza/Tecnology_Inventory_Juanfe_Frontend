@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import { usePeriodAssets } from '@/hooks/useInventory'
-import { MONTHS } from '@/utils/constants'
+import { MONTHS, CATEGORY_LABEL } from '@/utils/constants'
 import { formatDateTime } from '@/utils/date'
 import { useExportXlsx } from '@/hooks/useExportsFile'
 import type { ExportXlsxFilter } from '@/types/exports.type'
@@ -156,7 +156,7 @@ export default function PeriodDetailPage() {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className="text-sm text-slate-500">{item.category_name}</span>
+                                    <span className="text-sm text-slate-500">{CATEGORY_LABEL[item.category_name] || item.category_name}</span>
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className="text-sm text-slate-500">{item.city_name}</span>
@@ -197,7 +197,7 @@ export default function PeriodDetailPage() {
                             {item.asset_description}
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5">
-                            {item.category_name} · {item.city_name}
+                            {CATEGORY_LABEL[item.category_name] || item.category_name} · {item.city_name}
                             {item.area_name && ` · ${item.area_name}`}
                         </p>
                     </div>

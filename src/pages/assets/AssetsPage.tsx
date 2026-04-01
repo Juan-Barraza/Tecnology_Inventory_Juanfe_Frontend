@@ -4,7 +4,7 @@ import { useAssets } from '@/hooks/useAssets'
 import { useDebounce } from '@/hooks/useDebounce'
 import AddAssetModal from './components/AddAssetModal'
 import type { AssetFilter, LogicalStatus } from '@/types/asset.type'
-import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR } from '@/utils/constants'
+import { LOGICAL_STATUS_LABEL, LOGICAL_STATUS_COLOR, CATEGORY_LABEL } from '@/utils/constants'
 import { formatDate } from '@/utils/date'
 import { useExportXlsx } from '@/hooks/useExportsFile'
 import type { ExportXlsxFilter } from '@/types/exports.type'
@@ -144,7 +144,7 @@ export default function AssetsPage() {
             onChange={e => handleAreaFilter((Number(e.target.value) as number) || undefined)}
             className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium appearance-none pr-8 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors cursor-pointer"
           >
-            <option value={filters.area_id ?? 0}>Todas las areas</option>
+            <option value="">Todas las areas</option>
             {areas?.map(a => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}
@@ -243,7 +243,7 @@ export default function AssetsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-500">{asset.category}</span>
+                    <span className="text-sm text-slate-500">{CATEGORY_LABEL[asset.category] || asset.category}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm text-slate-500">{formatDate(asset.activation_date)}</span>
@@ -305,7 +305,7 @@ export default function AssetsPage() {
                 {asset.description}
               </p>
               <div className="flex items-center gap-3 text-xs text-slate-400">
-                <span>{asset.category}</span>
+                <span>{CATEGORY_LABEL[asset.category] || asset.category}</span>
                 <span>·</span>
                 <span>{asset.city}</span>
                 {asset.area && <><span>·</span><span>{asset.area}</span></>}
