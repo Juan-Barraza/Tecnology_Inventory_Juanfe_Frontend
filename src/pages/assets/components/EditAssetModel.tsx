@@ -3,14 +3,19 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useUpdateAsset } from '@/hooks/useAssets'
-import { useCities, useAreas } from '@/hooks/useCatalogs'
+import { useCities, useAreas, useCategories, useAccountingGroups } from '@/hooks/useCatalogs'
+import { CATEGORY_LABEL } from '@/utils/constants'
 import type { Asset } from '@/types/asset.type'
 
 const schema = z.object({
-    description: z.string().min(2, 'Mínimo 2 caracteres'),
-    city_id: z.number({ message: 'Selecciona una ciudad' }).min(1),
+    description: z.string().nullable().optional(),
+    owner: z.string().nullable().optional(),
+    city_id: z.number().nullable().optional(),
     area_id: z.number().nullable().optional(),
     code: z.string().nullable().optional(),
+    historical_cost: z.number().nullable().optional(),
+    category_id: z.number().nullable().optional(),
+    asset_account_id: z.number().nullable().optional(),
 })
 
 type EditForm = z.infer<typeof schema>
@@ -28,13 +33,19 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
     const { mutate: updateAsset, isPending, error } = useUpdateAsset()
     const { data: cities = [] } = useCities()
     const { data: areas = [] } = useAreas()
+    const { data: categories = [] } = useCategories()
+    const { data: accountingGroups = [] } = useAccountingGroups()
 
     const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EditForm>({
         resolver: zodResolver(schema),
         defaultValues: {
             description: asset.description,
+            owner: asset.owner ?? '',
             city_id: asset.city_id,
             area_id: asset.area_id ?? null,
+            historical_cost: asset.historical_cost,
+            category_id: asset.category_id,
+            asset_account_id: asset.asset_account_id,
         },
     })
 
@@ -43,9 +54,13 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
         if (isOpen) {
             reset({
                 description: asset.description,
+                owner: asset.owner ?? '',
                 city_id: asset.city_id,
                 area_id: asset.area_id ?? null,
                 code: asset.code,
+                historical_cost: asset.historical_cost,
+                category_id: asset.category_id,
+                asset_account_id: asset.asset_account_id,
             })
         }
     }, [isOpen, asset, reset])
@@ -57,10 +72,14 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
             {
                 id: asset.id,
                 data: {
-                    description: data.description,
-                    city_id: Number(data.city_id),
+                    description: data.description || '',
+                    owner: data.owner || null,
+                    city_id: data.city_id ? Number(data.city_id) : undefined,
                     area_id: data.area_id ? Number(data.area_id) : null,
                     code: data.code || 'Sin codigo',
+                    historical_cost: data.historical_cost ?? null,
+                    category_id: data.category_id ? Number(data.category_id) : null,
+                    asset_account_id: data.asset_account_id ? Number(data.asset_account_id) : null,
                 },
             },
             { onSuccess: () => onClose() }
@@ -125,6 +144,18 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                         )}
                     </div>
 
+                    {/* Propietario */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Propietario legal <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+                        </label>
+                        <input
+                            {...register('owner')}
+                            placeholder="Propietario del activo"
+                            className={inputClass}
+                        />
+                    </div>
+
                     {/* Ciudad */}
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -165,6 +196,68 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                                 ))}
                             </select>
                             <ChevronIcon />
+                        </div>
+                    </div>
+
+                    {/* Categoría */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Categoría <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+                        </label>
+                        <div className="relative">
+                            <select
+                                {...register('category_id', { valueAsNumber: true })}
+                                className={selectClass}
+                            >
+                                <option value={0}>Seleccionar...</option>
+                                {categories.map(c => (
+                                    <option key={c.id} value={c.id}>
+                                        {CATEGORY_LABEL[c.name] || c.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <ChevronIcon />
+                        </div>
+                    </div>
+
+                    {/* Grupo contable */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Grupo Contable <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+                        </label>
+                        <div className="relative">
+                            <select
+                                {...register('asset_account_id', { valueAsNumber: true })}
+                                className={selectClass}
+                            >
+                                <option value={0}>Seleccionar...</option>
+                                {accountingGroups.map(g =>
+                                    g.accounts.map(a => (
+                                        <option key={a.id} value={a.id}>
+                                            {g.name} — {a.account_code}
+                                        </option>
+                                    ))
+                                )}
+                            </select>
+                            <ChevronIcon />
+                        </div>
+                    </div>
+
+                    {/* Costo histórico */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Costo Histórico <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+                        </label>
+                        <div className="relative">
+                            <input
+                                {...register('historical_cost', {
+                                    setValueAs: v => (v === "" || isNaN(Number(v)) ? 0 : Number(v))
+                                })}
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                className={`${inputClass} pl-8`}
+                            />
                         </div>
                     </div>
 

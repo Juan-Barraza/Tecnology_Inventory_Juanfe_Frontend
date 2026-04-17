@@ -9,14 +9,15 @@ import { CATEGORY_LABEL } from '@/utils/constants'
 
 const assetSchema = z.object({
   code: z.string().nullable().optional(),
-  description: z.string().min(2, 'La descripción es requerida'),
-  category_id: z.number({ message: 'Selecciona una categoría' }).min(1),
-  asset_account_id: z.number({ message: 'Selecciona un grupo contable' }).min(1),
-  city_id: z.number({ message: 'Selecciona una ciudad' }).min(1),
+  description: z.string().nullable().optional(),
+  owner: z.string().nullable().optional(),
+  category_id: z.number().nullable().optional(),
+  asset_account_id: z.number().nullable().optional(),
+  city_id: z.number().nullable().optional(),
   area_id: z.number().nullable().optional(),
   historical_cost: z.number().nullable().optional(),
-  activation_date: z.string().min(1, 'La fecha de activación es requerida'),
-  physical_status: z.enum(['optimal', 'good', 'fair', 'deteriorated', 'out_of_service']),
+  activation_date: z.string().nullable().optional(),
+  physical_status: z.enum(['optimal', 'good', 'fair', 'deteriorated', 'out_of_service']).optional(),
 })
 
 type AssetForm = z.infer<typeof assetSchema>
@@ -86,12 +87,15 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
       {
         ...data,
         code: data.code || 'Sin codigo',
-        category_id: Number(data.category_id),
-        asset_account_id: Number(data.asset_account_id),
-        city_id: Number(data.city_id),
+        description: data.description || '',
+        owner: data.owner || null,
+        category_id: data.category_id ? Number(data.category_id) : null,
+        asset_account_id: data.asset_account_id ? Number(data.asset_account_id) : null,
+        city_id: data.city_id ? Number(data.city_id) : null,
         area_id: data.area_id ? Number(data.area_id) : null,
         historical_cost: data.historical_cost ?? null,
-        physical_status: data.physical_status as PhysicalStatus,
+        activation_date: data.activation_date || new Date().toISOString().split('T')[0],
+        physical_status: (data.physical_status || 'optimal') as PhysicalStatus,
       },
       { onSuccess: () => onClose() }
     )
@@ -139,7 +143,10 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
 
             {/* Código */}
             <div>
-              <Label>Código</Label>
+              <Label>
+                Código{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
               <input
                 {...register('code')}
                 placeholder="Ej. 08-EQC-100"
@@ -161,7 +168,10 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
 
             {/* Descripción — ocupa las 2 columnas */}
             <div className="sm:col-span-2">
-              <Label>Descripción</Label>
+              <Label>
+                Descripción{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
               <input
                 {...register('description')}
                 placeholder="Ej. Portátil Dell Latitude 5420"
@@ -170,15 +180,31 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
               <FieldError message={errors.description?.message} />
             </div>
 
+            {/* Propietario */}
+            <div className="sm:col-span-2">
+              <Label>
+                Propietario legal{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
+              <input
+                {...register('owner')}
+                placeholder="Ej. Camara de comercio"
+                className={inputClass()}
+              />
+            </div>
+
             {/* Categoría */}
             <div>
-              <Label>Categoría</Label>
+              <Label>
+                Categoría{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
               <div className="relative">
                 <select
                   {...register('category_id', { valueAsNumber: true })}
                   className={selectClass(!!errors.category_id)}
                 >
-                  <option value="">Seleccionar...</option>
+                  <option value={0}>Seleccionar...</option>
                   {categories.map(c => (
                     <option key={c.id} value={c.id}>
                       {CATEGORY_LABEL[c.name] || c.name}
@@ -192,13 +218,16 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
 
             {/* Grupo contable */}
             <div>
-              <Label>Grupo Contable</Label>
+              <Label>
+                Grupo Contable{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
               <div className="relative">
                 <select
                   {...register('asset_account_id', { valueAsNumber: true })}
                   className={selectClass(!!errors.asset_account_id)}
                 >
-                  <option value="">Seleccionar...</option>
+                  <option value={0}>Seleccionar...</option>
                   {accountingGroups.map(g =>
                     g.accounts.map(a => (
                       <option key={a.id} value={a.id}>
@@ -214,7 +243,10 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
 
             {/* Ciudad */}
             <div>
-              <Label>Ciudad</Label>
+              <Label>
+                Ciudad{' '}
+                <span className="text-slate-400 font-normal text-xs">(opcional)</span>
+              </Label>
               <div className="relative">
                 <select
                   {...register('city_id', { valueAsNumber: true })}
@@ -241,7 +273,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
                   {...register('area_id', { valueAsNumber: true })}
                   className={selectClass()}
                 >
-                  <option value="">Sin área asignada</option>
+                  <option value={0}>Sin área asignada</option>
                   {areas.map(a => (
                     <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
@@ -258,13 +290,16 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
               </Label>
               <div className="relative">
                 <input
-                  {...register('historical_cost', { valueAsNumber: true })}
+                  {...register('historical_cost', {
+                    setValueAs: v => (v === "" || isNaN(Number(v)) ? 0 : Number(v))
+                  })}
                   type="number"
                   step="0.01"
                   placeholder="0.00"
-                  className={`${inputClass()} pl-8`}
+                  className={`${inputClass(!!errors.historical_cost)} pl-8`}
                 />
               </div>
+              <FieldError message={errors.historical_cost?.message} />
             </div>
 
             {/* Estado físico */}
