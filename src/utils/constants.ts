@@ -48,4 +48,9 @@ export const CATEGORY_LABEL: Record<string, string> = {
     'Projector': 'Proyector',
     'Storage': 'Almacenamiento',
     'Tablet': 'Tableta',
+    'Electrodomestico': 'Electrodoméstico',
+    'Escritorio': 'Escritorio',
+    'Archivador': 'Archivador',
+    'Sillas': 'Sillas',
+    'Descansa Pies': 'Descansa Pies',
 }

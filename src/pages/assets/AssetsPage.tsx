@@ -116,7 +116,7 @@ export default function AssetsPage() {
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar por código o descripción..."
+          placeholder="Buscar por código, propietario legal o descripción..."
           className="px-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors"
         />
 

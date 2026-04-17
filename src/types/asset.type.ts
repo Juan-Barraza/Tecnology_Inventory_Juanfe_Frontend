@@ -14,6 +14,9 @@ export interface Asset {
     area: string | null
     city_id: number
     area_id: number | null
+    category_id: number
+    asset_account_id: number
+    owner: string | null
     historical_cost: number | null
     activation_date: string
     logical_status: LogicalStatus
@@ -25,9 +28,10 @@ export interface Asset {
 export interface CreateAssetRequest {
     code: string
     description: string
-    category_id: number
-    asset_account_id: number
-    city_id: number
+    owner: string | null
+    category_id: number | null
+    asset_account_id: number | null
+    city_id: number | null
     area_id: number | null
     historical_cost: number | null
     activation_date: string
@@ -37,9 +41,10 @@ export interface CreateAssetRequest {
 export interface UpdateAssetRequest {
     code?: string,
     description?: string
-    category_id?: number
-    asset_account_id?: number
-    city_id?: number
+    owner?: string | null
+    category_id?: number | null
+    asset_account_id?: number | null
+    city_id?: number | null
     area_id?: number | null
     historical_cost?: number | null
     physical_status?: PhysicalStatus
@@ -55,6 +60,7 @@ export interface AssetFilter {
     city_id?: number
     area_id?: number
     category_id?: number
+    owner?: string | null
     asset_account_id?: number
     logical_status?: LogicalStatus
     physical_status?: PhysicalStatus

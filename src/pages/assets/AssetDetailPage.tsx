@@ -114,6 +114,7 @@ export default function AssetDetailPage() {
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             <InfoField label="Categoría" value={CATEGORY_LABEL[asset.category] || asset.category} />
+                            <InfoField label="Propietario legal" value={asset.owner ?? '—'} />
                             <InfoField label="Ciudad" value={asset.city} />
                             <InfoField label="Área" value={asset.area ?? '—'} />
                             <InfoField label="Fecha activación" value={formatDate(asset.activation_date)} />
