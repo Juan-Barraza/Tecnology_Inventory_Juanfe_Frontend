@@ -59,7 +59,7 @@ export default function AssetDetailPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                     <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">
-                        {asset.code}
+                        {asset.code === '' ? 'Sin codigo' : asset.code}
                     </span>
                 </div>
 
@@ -96,7 +96,7 @@ export default function AssetDetailPage() {
                         <div className="flex items-start justify-between gap-4 mb-6">
                             <div>
                                 <span className="font-mono text-xs font-bold text-slate-400 dark:text-slate-500 tracking-wider">
-                                    {asset.code}
+                                    {asset.code === '' ? 'Sin codigo' : asset.code}
                                 </span>
                                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1 leading-snug">
                                     {asset.description}

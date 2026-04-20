@@ -39,6 +39,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
     const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EditForm>({
         resolver: zodResolver(schema),
         defaultValues: {
+            code: asset.code ?? '',
             description: asset.description,
             owner: asset.owner ?? '',
             city_id: asset.city_id,
@@ -76,7 +77,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                     owner: data.owner || null,
                     city_id: data.city_id ? Number(data.city_id) : undefined,
                     area_id: data.area_id ? Number(data.area_id) : null,
-                    code: data.code || 'Sin codigo',
+                    code: data.code || '',
                     historical_cost: data.historical_cost ?? null,
                     category_id: data.category_id ? Number(data.category_id) : null,
                     asset_account_id: data.asset_account_id ? Number(data.asset_account_id) : null,
@@ -166,7 +167,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                                 {...register('city_id', { valueAsNumber: true })}
                                 className={selectClass}
                             >
-                                <option value="">Seleccionar...</option>
+                                <option value={0}>Seleccionar...</option>
                                 {cities.map(c => (
                                     <option key={c.id} value={c.id}>
                                         {c.name} — {c.department}
@@ -190,7 +191,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
                                 {...register('area_id', { valueAsNumber: true })}
                                 className={selectClass}
                             >
-                                <option value="">Sin área asignada</option>
+                                <option value={0}>Sin área asignada</option>
                                 {areas.map(a => (
                                     <option key={a.id} value={a.id}>{a.name}</option>
                                 ))}
