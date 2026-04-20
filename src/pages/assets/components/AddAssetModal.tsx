@@ -86,7 +86,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
     createAsset(
       {
         ...data,
-        code: data.code || 'Sin codigo',
+        code: data.code || '',
         description: data.description || '',
         owner: data.owner || null,
         category_id: data.category_id ? Number(data.category_id) : null,
@@ -250,9 +250,9 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
               <div className="relative">
                 <select
                   {...register('city_id', { valueAsNumber: true })}
-                  className={selectClass(!!errors.city_id)}
+                  className={selectClass()}
                 >
-                  <option value="">Seleccionar...</option>
+                  <option value={0} >Seleccionar...</option>
                   {cities.map(c => (
                     <option key={c.id} value={c.id}>{c.name} — {c.department}</option>
                   ))}
