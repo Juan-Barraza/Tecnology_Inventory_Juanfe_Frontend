@@ -234,7 +234,7 @@ export default function AssetsPage() {
                 >
                   <td className="px-6 py-4">
                     <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-300">
-                      {asset.code}
+                      {asset.code === '' ? 'Sin codigo' : asset.code}
                     </span>
                   </td>
                   <td className="px-6 py-4 max-w-xs">

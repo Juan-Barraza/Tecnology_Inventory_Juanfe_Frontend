@@ -26,7 +26,7 @@ export interface Asset {
 }
 
 export interface CreateAssetRequest {
-    code: string
+    code: string | null
     description: string
     owner: string | null
     category_id: number | null
