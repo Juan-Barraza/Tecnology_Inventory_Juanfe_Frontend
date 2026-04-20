@@ -39,7 +39,7 @@ export default function EditAssetModal({ isOpen, onClose, asset }: Props) {
     const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EditForm>({
         resolver: zodResolver(schema),
         defaultValues: {
-            code: asset.code ?? '',
+            code: asset.code ?? null,
             description: asset.description,
             owner: asset.owner ?? '',
             city_id: asset.city_id,

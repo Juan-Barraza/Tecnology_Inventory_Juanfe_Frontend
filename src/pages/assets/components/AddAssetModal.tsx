@@ -86,7 +86,7 @@ export default function AddAssetModal({ isOpen, onClose }: Props) {
     createAsset(
       {
         ...data,
-        code: data.code || '',
+        code: data.code || null,
         description: data.description || '',
         owner: data.owner || null,
         category_id: data.category_id ? Number(data.category_id) : null,
